@@ -125,40 +125,6 @@ export default function Header({
 
         {/* Quick actions & Toggle workspace views */}
         <div className="flex items-center gap-4">
-          {/* Share Guest Link Button */}
-          <button 
-            onClick={handleShareLink}
-            className={`px-3 py-1.5 text-xs font-bold font-sans rounded-lg transition-all cursor-pointer ${
-              copied 
-                ? "bg-primary text-on-primary shadow-sm" 
-                : "bg-surface-container-high hover:bg-surface-container-highest text-white/95 border border-white/5"
-            }`}
-          >
-            {copied ? "Link Copied ✓" : "Share Guest Link"}
-          </button>
-
-          {/* Interactive Guest Mode Toggle Switch */}
-          {onToggleGuestMode && (
-            <button 
-              type="button"
-              onClick={onToggleGuestMode}
-              title={isGuestMode ? "Back to Owner Space" : "Preview Guest Mode"}
-              className="px-2.5 py-1.5 bg-surface-container-high hover:bg-surface-container-highest hover:text-primary transition-all rounded-lg border border-white/5 flex items-center gap-2 text-xs font-bold cursor-pointer font-sans"
-            >
-              {isGuestMode ? (
-                <>
-                  <EyeOff className="w-3.5 h-3.5 text-secondary" />
-                  <span className="hidden sm:inline">Owner View</span>
-                </>
-              ) : (
-                <>
-                  <Eye className="w-3.5 h-3.5 text-primary" />
-                  <span className="hidden sm:inline">Guest Preview</span>
-                </>
-              )}
-            </button>
-          )}
-
           <button 
             onClick={() => setActiveTab("history")}
             className="text-on-surface-variant hover:text-primary transition-colors p-2.5 rounded-xl hover:bg-white/5 flex items-center gap-2 border border-white/5 bg-surface-container-high/40 group hidden sm:flex cursor-pointer text-xs font-bold"

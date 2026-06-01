@@ -22,8 +22,13 @@ import { collection, onSnapshot, setDoc, doc, deleteDoc } from "firebase/firesto
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>("daily-entry");
   
-  // Hardlock Guest Mode under custom URL query-string constraint
-  const isLockedGuest = window.location.search.includes("guest=true");
+  // Hardlock Guest Mode under custom subpage path URL or query-string constraint
+  const isLockedGuest = 
+    window.location.pathname === "/guest" || 
+    window.location.pathname.startsWith("/guest/") ||
+    window.location.search.includes("guest=true") ||
+    window.location.hash.includes("guest");
+
   const [isGuestMode, setIsGuestMode] = useState<boolean>(() => {
     return isLockedGuest;
   });

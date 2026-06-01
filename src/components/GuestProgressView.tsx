@@ -69,27 +69,17 @@ export default function GuestProgressView({
       : 90
   )));
 
-  const defaultBoosts = [
-    {
-      id: "1",
-      name: "Aarav",
-      message: "You are absolutely crushing your 100-Day Challenge! Sending massive strength and focus your way!",
-      timestamp: "2026-05-25T12:00:00Z"
-    },
-    {
-      id: "2",
-      name: "Anonymous",
-      message: "Your discipline and beautiful creative art inspire everyone around us. Keep taking it one step at a time! ✨",
-      timestamp: "2026-05-28T09:30:00Z"
-    }
-  ];
+  const defaultBoosts: { id: string; name: string; message: string; timestamp: string }[] = [];
 
   // Energy boosts state with storage support
   const [energyBoosts, setEnergyBoosts] = useState<{ id: string; name: string; message: string; timestamp: string }[]>(() => {
     const saved = localStorage.getItem("finding_khushboo_energy_boosts");
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return parsed.filter((item: any) => item.id !== "1" && item.id !== "2");
+        }
       } catch (e) {
         // Fallback
       }
