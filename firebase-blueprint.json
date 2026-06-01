@@ -1,0 +1,58 @@
+{
+  "entities": {
+    "DailyEntry": {
+      "title": "DailyEntry",
+      "description": "A single day's logged progress node for Khushboo's 100-day ascent",
+      "type": "object",
+      "properties": {
+        "day": { "type": "number", "description": "The sequential day number (1-100)" },
+        "date": { "type": "string", "format": "date", "description": "Calendar date formatted YYYY-MM-DD" },
+        "dietFollowed": { "type": "boolean", "description": "Whether the restricted diet was strictly followed" },
+        "dietExceptionsUsed": { "type": "number", "description": "Cumulative exceptions used, max 7 total" },
+        "workFocus": { "type": "string", "enum": ["Case Study", "Client Project", "Upskilling", "None"], "description": "Focus category of professional work" },
+        "workFocusDetails": { "type": "string", "description": "Detailed notes on project progress for that day" },
+        "physicalActivity": { "type": "array", "description": "List of physical activities completed" },
+        "physicalActivityOther": { "type": "string", "description": "Custom physical activity details" },
+        "physicalDuration": { "type": "number", "description": "Physical activity duration in minutes" },
+        "socialConnection": { "type": "string", "enum": ["none", "family", "friend", "collaborator"], "description": "Primary social connected channel" },
+        "creativeOutput": { "type": "string", "description": "Self-directed creative hobby output description" },
+        "creativeTags": { "type": "array", "description": "Custom topic tags for creative hobby output" },
+        "writeDuration": { "type": "number", "description": "Introspective journaling duration in minutes" },
+        "writeType": { "type": "string", "enum": ["Journal", "Case Study", "Reflection"], "description": "Introspective writing genre" },
+        "contentCreated": { "type": "boolean", "description": "Whether a piece of portfolio content was made/shared" },
+        "contentType": { "type": "string", "enum": ["Text Post", "Video", "Carousel", "None"], "description": "Visual format of created content" },
+        "contentFormatList": { "type": "array", "description": "Specific list of content formats" },
+        "contentPlatforms": { "type": "array", "description": "Platforms where content was distributed" },
+        "readPages": { "type": "number", "description": "Number of pages or documentation items read" },
+        "readType": { "type": "string", "enum": ["Book", "Report/Paper"], "description": "Reading medium" },
+        "readDocTitleOrLink": { "type": "string", "description": "Title or web link of reading source" },
+        "earnings": { "type": "number", "description": "Daily monetary value logged in Rs" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of creation" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp of last modification" }
+      },
+      "required": ["day", "date", "dietFollowed", "dietExceptionsUsed", "workFocus", "physicalActivity", "physicalDuration", "socialConnection", "creativeOutput", "creativeTags", "writeDuration", "writeType", "contentCreated", "contentType", "readPages", "earnings"]
+    },
+    "EnergyBoost": {
+      "title": "EnergyBoost",
+      "description": "A public supporter's real-time words of encouragement to fuel Khushboo's challenge",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier of the energy boost" },
+        "name": { "type": "string", "description": "Display name of the sender or Anonymous" },
+        "message": { "type": "string", "description": "Supportive words of encouragement" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "ISO timestamp of submission" }
+      },
+      "required": ["id", "name", "message", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/entries/{dayId}": {
+      "schema": "DailyEntry",
+      "description": "Daily logged entry documents"
+    },
+    "/energyBoosts/{boostId}": {
+      "schema": "EnergyBoost",
+      "description": "Encouragement guestbook boosts collection"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Finding Khushboo",
+  "description": "A beautiful, glassmorphic self-transformation tracking dashboard over 100 days.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

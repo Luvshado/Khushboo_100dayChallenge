@@ -1,0 +1,71 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Common Global Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner() {
+      return isSignedIn() && 
+             request.auth.token.email == "khushboorathi1994@gmail.com" && 
+             request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // 1. Progress Entries: Public read-only; writes restricted solely to verified challenge owner.
+    match /entries/{dayId} {
+      allow read: if true; // Public guest progress views must read these
+      
+      allow create: if isOwner() && 
+                       isValidId(dayId) && 
+                       isValidEntry(request.resource.data);
+
+      allow update: if isOwner() && 
+                       isValidId(dayId) && 
+                       isValidEntry(request.resource.data);
+
+      allow delete: if isOwner() && 
+                       isValidId(dayId);
+    }
+
+    function isValidEntry(data) {
+      return data.day is int && 
+             data.day >= 1 && data.day <= 100 &&
+             data.date is string && data.date.size() == 10 &&
+             data.dietFollowed is bool &&
+             data.dietExceptionsUsed is int &&
+             data.dietExceptionsUsed >= 0 &&
+             data.dietExceptionsUsed <= 7 &&
+             data.workFocus is string &&
+             data.physicalDuration is int &&
+             data.writeDuration is int &&
+             data.readPages is int &&
+             (data.earnings is int || data.earnings is float);
+    }
+
+    // 2. Public Support Boosts: Open creation (with strict input size limits to block wallet attacks); no updates or deletions are permitted.
+    match /energyBoosts/{boostId} {
+      allow read: if true; // Public board views
+      allow create: if isValidId(boostId) && 
+                       isValidBoost(request.resource.data);
+      allow update, delete: if false; // Once submitted, a boost cannot be modified or deleted.
+    }
+
+    function isValidBoost(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.name is string && data.name.size() <= 64 &&
+             data.message is string && data.message.size() <= 1000 &&
+             data.timestamp is string && data.timestamp.size() <= 64;
+    }
+  }
+}
