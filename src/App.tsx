@@ -14,6 +14,7 @@ import DailyEntryView from "./components/DailyEntryView";
 import HistoryLogView from "./components/HistoryLogView";
 import SanctuaryView from "./components/SanctuaryView";
 import GuestProgressView from "./components/GuestProgressView";
+import GuestCalendarView from "./components/GuestCalendarView";
 import { DailyEntry, INITIAL_ENTRIES } from "./types";
 import { db, isFirebaseConfigured, handleFirestoreError, OperationType } from "./lib/firebase";
 import { collection, onSnapshot, setDoc, doc, deleteDoc } from "firebase/firestore";
@@ -312,20 +313,73 @@ export default function App() {
         </div>
 
         <Header 
-          activeTab="" 
-          setActiveTab={() => {}} 
+          activeTab={activeTab === "daily-entry" ? "dashboard" : activeTab} 
+          setActiveTab={setActiveTab} 
           day={activeDay}
           isGuestMode={true}
         />
 
         <main className="pt-32 px-4 md:px-12 max-w-7xl mx-auto space-y-gutter relative z-10 w-full mb-12">
-          <GuestProgressView 
-            entries={entries} 
-            activeDay={activeDay} 
-            totalStats={totalStats} 
-            successCriteria={successCriteria}
-          />
+          <AnimatePresence mode="wait">
+            {activeTab === "history" ? (
+              <motion.div
+                key="guest-calendar"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <GuestCalendarView 
+                  entries={entries} 
+                  activeDay={activeDay} 
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="guest-overview"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <GuestProgressView 
+                  entries={entries} 
+                  activeDay={activeDay} 
+                  totalStats={totalStats} 
+                  successCriteria={successCriteria}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
+
+        <nav className="md:hidden fixed bottom-0 left-0 w-full z-40 bg-surface-container/85 backdrop-blur-3xl border-t border-white/10 shadow-[0_-5px_30px_rgba(0,0,0,0.5)] rounded-t-2xl pb-safe">
+          <div className="flex justify-around items-center h-16 pt-2">
+            <button 
+              onClick={() => setActiveTab("dashboard")}
+              className={`flex flex-col items-center justify-center py-1 px-4 rounded-xl cursor-pointer transition-all active:scale-95 ${
+                activeTab === "dashboard" || activeTab === "daily-entry"
+                  ? "bg-primary/15 text-primary scale-105"
+                  : "text-on-surface-variant hover:text-white"
+              }`}
+            >
+              <LayoutDashboard className="w-5 h-5" />
+              <span className="text-[10px] font-bold font-sans mt-1">Overview</span>
+            </button>
+
+            <button 
+              onClick={() => setActiveTab("history")}
+              className={`flex flex-col items-center justify-center py-1 px-4 rounded-xl cursor-pointer transition-all active:scale-95 ${
+                activeTab === "history"
+                  ? "bg-primary/15 text-primary scale-105"
+                  : "text-on-surface-variant hover:text-white"
+              }`}
+            >
+              <History className="w-5 h-5" />
+              <span className="text-[10px] font-bold font-sans mt-1">100-Day Grid</span>
+            </button>
+          </div>
+        </nav>
       </div>
     );
   }
@@ -354,20 +408,37 @@ export default function App() {
       {/* Main Container Viewport */}
       <main className="pt-32 px-4 md:px-12 max-w-7xl mx-auto space-y-gutter relative z-10 w-full mb-12">
         {isGuestMode ? (
-          <motion.div
-            key="guest-mode"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <GuestProgressView 
-              entries={entries} 
-              activeDay={activeDay} 
-              totalStats={totalStats} 
-              successCriteria={successCriteria}
-              onExitGuestMode={isLockedGuest ? undefined : () => setIsGuestMode(false)}
-            />
-          </motion.div>
+          <AnimatePresence mode="wait">
+            {activeTab === "history" ? (
+              <motion.div
+                key="guest-calendar"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <GuestCalendarView 
+                  entries={entries} 
+                  activeDay={activeDay} 
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="guest-mode"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <GuestProgressView 
+                  entries={entries} 
+                  activeDay={activeDay} 
+                  totalStats={totalStats} 
+                  successCriteria={successCriteria}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         ) : (
           <AnimatePresence mode="wait">
             {activeTab === "dashboard" && (
@@ -447,7 +518,35 @@ export default function App() {
       </main>
 
       {/* Bottom Floating Navigation (Shared Component - Mobile Only overlay) */}
-      {!isGuestMode && (
+      {isGuestMode ? (
+        <nav className="md:hidden fixed bottom-0 left-0 w-full z-40 bg-surface-container/85 backdrop-blur-3xl border-t border-white/10 shadow-[0_-5px_30px_rgba(0,0,0,0.5)] rounded-t-2xl pb-safe">
+          <div className="flex justify-around items-center h-16 pt-2">
+            <button 
+              onClick={() => setActiveTab("dashboard")}
+              className={`flex flex-col items-center justify-center py-1 px-4 rounded-xl cursor-pointer transition-all active:scale-95 ${
+                activeTab === "dashboard" || activeTab === "daily-entry"
+                  ? "bg-primary/15 text-primary scale-105"
+                  : "text-on-surface-variant hover:text-white"
+              }`}
+            >
+              <LayoutDashboard className="w-5 h-5" />
+              <span className="text-[10px] font-bold font-sans mt-1">Overview</span>
+            </button>
+
+            <button 
+              onClick={() => setActiveTab("history")}
+              className={`flex flex-col items-center justify-center py-1 px-4 rounded-xl cursor-pointer transition-all active:scale-95 ${
+                activeTab === "history"
+                  ? "bg-primary/15 text-primary scale-105"
+                  : "text-on-surface-variant hover:text-white"
+              }`}
+            >
+              <History className="w-5 h-5" />
+              <span className="text-[10px] font-bold font-sans mt-1">100-Day Grid</span>
+            </button>
+          </div>
+        </nav>
+      ) : (
         <nav className="md:hidden fixed bottom-0 left-0 w-full z-40 bg-surface-container/85 backdrop-blur-3xl border-t border-white/10 shadow-[0_-5px_30px_rgba(0,0,0,0.5)] rounded-t-2xl pb-safe">
           <div className="flex justify-around items-center h-16 pt-2">
             

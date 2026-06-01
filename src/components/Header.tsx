@@ -30,8 +30,8 @@ export default function Header({
       <div className="flex justify-between items-center px-4 md:px-12 py-3.5 max-w-7xl mx-auto w-full">
         {/* Brand Logo */}
         <div 
-          onClick={() => !isGuestMode && setActiveTab("dashboard")}
-          className={`flex items-center gap-2 group ${isGuestMode ? "cursor-default" : "cursor-pointer"}`}
+          onClick={() => setActiveTab("dashboard")}
+          className="flex items-center gap-2 group cursor-pointer"
         >
           <div className="relative">
             <div className="absolute -inset-1 rounded-md bg-gradient-to-r from-primary via-secondary to-tertiary opacity-30 blur group-hover:opacity-60 transition duration-500"></div>
@@ -44,9 +44,31 @@ export default function Header({
 
         {/* Navigation Links based on mode */}
         {isGuestMode ? (
-          <div className="hidden md:flex items-center gap-2.5 px-4 py-1.5 bg-secondary/10 border border-secondary/25 rounded-full text-secondary text-xs font-bold font-sans">
-            <Globe className="w-3.5 h-3.5 shrink-0 animate-spin" style={{ animationDuration: "12s" }} />
-            <span>Public Progress Link Active (Logged details hidden)</span>
+          /* Desktop Navigation Links for Guests */
+          <div className="hidden md:flex items-center gap-1.5 bg-surface-container-low/60 rounded-full p-1 border border-white/5">
+            <button
+              onClick={() => setActiveTab("dashboard")}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-all text-sm font-medium ${
+                activeTab === "dashboard" || activeTab === "daily-entry"
+                  ? "bg-primary text-on-primary shadow-lg shadow-primary/20"
+                  : "text-on-surface-variant hover:text-white"
+              }`}
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              Overview
+            </button>
+
+            <button
+              onClick={() => setActiveTab("history")}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-all text-sm font-medium ${
+                activeTab === "history"
+                  ? "bg-primary text-on-primary shadow-lg shadow-primary/20"
+                  : "text-on-surface-variant hover:text-white"
+              }`}
+            >
+              <Calendar className="w-4 h-4" />
+              100-Day Sequence
+            </button>
           </div>
         ) : (
           /* Desktop Navigation Links */
@@ -137,17 +159,14 @@ export default function Header({
             </button>
           )}
 
-          <button className="relative text-on-surface-variant hover:text-primary transition-colors p-1.5 rounded-full hover:bg-white/5 group hidden sm:block">
-            <Calendar className="w-5 h-5" />
-            <span className="absolute bottom-[-24px] left-1/2 -translate-x-1/2 bg-surface-container-high text-neutral-200 text-[10px] uppercase font-sans tracking-widest py-0.5 px-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-              Calendar
+          <button 
+            onClick={() => setActiveTab("history")}
+            className="text-on-surface-variant hover:text-primary transition-colors p-2.5 rounded-xl hover:bg-white/5 flex items-center gap-2 border border-white/5 bg-surface-container-high/40 group hidden sm:flex cursor-pointer text-xs font-bold"
+          >
+            <Calendar className="w-4 h-4 text-primary shrink-0 animate-pulse" />
+            <span className="text-white/85 select-none font-sans">
+              {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
             </span>
-          </button>
-
-          <button className="relative text-on-surface-variant hover:text-primary transition-colors p-1.5 rounded-full hover:bg-white/5 group">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-secondary rounded-full animate-ping"></span>
-            <span className="absolute top-1 right-1 w-2 h-2 bg-secondary rounded-full"></span>
           </button>
 
           {/* User profile with serene style */}

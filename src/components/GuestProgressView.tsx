@@ -30,15 +30,13 @@ interface GuestProgressViewProps {
     quality: boolean;
     approval: boolean;
   };
-  onExitGuestMode?: () => void;
 }
 
 export default function GuestProgressView({
   entries,
   activeDay,
   totalStats,
-  successCriteria,
-  onExitGuestMode
+  successCriteria
 }: GuestProgressViewProps) {
   const [joined, setJoined] = useState(false);
 
@@ -169,7 +167,7 @@ export default function GuestProgressView({
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between gap-4 p-4 rounded-xl bg-primary/10 border border-primary/25 text-primary text-xs font-medium"
+        className="p-4 rounded-xl bg-primary/10 border border-primary/25 text-primary text-xs font-medium"
       >
         <div className="flex items-center gap-2">
           <Shield className="w-4 h-4 shrink-0" />
@@ -177,15 +175,6 @@ export default function GuestProgressView({
             <strong>Secure Public Viewer Mode:</strong> You are viewing Khushboo's progress on her 100-Day Ascent. Private logs, entries, and reflection sanctuaries are encrypted and locked.
           </span>
         </div>
-        {onExitGuestMode && (
-          <button 
-            type="button"
-            onClick={onExitGuestMode}
-            className="px-3 py-1 bg-primary hover:bg-primary/20 text-white font-bold rounded-lg border border-primary/40 transition-colors text-[10px] uppercase tracking-wider whitespace-nowrap cursor-pointer active:scale-95"
-          >
-            Owner Login
-          </button>
-        )}
       </motion.div>
 
       {/* Guest Banner Greeting */}
@@ -453,58 +442,6 @@ export default function GuestProgressView({
           </div>
         </div>
       </section>
-
-      {/* Progress Calendar Grid representing abstract compliance pattern */}
-      <div className="glass-panel rounded-2xl p-6 md:p-8 border border-white/5">
-        <h3 className="font-serif text-xl font-bold text-white mb-3.5 flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-primary" />
-          100-Day Sequence Overview
-        </h3>
-        
-        <p className="text-xs text-on-surface-variant/80 font-sans leading-relaxed mb-6">
-          This calendar displays which days represent successfully logged progress cycles. Tap-checking individual day details is strictly restricted to protect log integrity and diary privacy.
-        </p>
-
-        <div className="grid grid-cols-10 gap-1.5">
-          {Array.from({ length: 100 }).map((_, idx) => {
-            const dNum = idx + 1;
-            const isCompleted = !!entries[dNum];
-            const isActive = activeDay === dNum;
-            
-            return (
-              <div 
-                key={dNum}
-                className={`h-9.5 rounded-lg flex flex-col items-center justify-center transition-all ${
-                  isCompleted 
-                    ? "bg-primary/20 border border-primary/40 text-primary font-bold text-xs" 
-                    : "bg-surface-container-low/40 border border-white/5 text-on-surface-variant/30 text-[10px]"
-                } ${
-                  isActive ? "ring-2 ring-secondary text-secondary font-extrabold" : ""
-                }`}
-                title={isCompleted ? `Day ${dNum} Log Complete` : `Day ${dNum} Incomplete`}
-              >
-                <span>{dNum}</span>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Legend */}
-        <div className="flex items-center gap-6 mt-6 pt-5 border-t border-white/5 text-[10px] font-bold font-sans text-on-surface-variant uppercase tracking-wider">
-          <div className="flex items-center gap-1.5 text-primary">
-            <span className="w-3 h-3 rounded bg-primary/20 border border-primary/40"></span>
-            Logged Node Completed
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded bg-surface-container-low/40 border border-white/5"></span>
-            Upcoming/Incomplete Day
-          </div>
-          <div className="flex items-center gap-1.5 text-secondary">
-            <span className="w-3.5 h-3.5 rounded border border-secondary ring-2 ring-secondary/25"></span>
-            Active Day Sequence
-          </div>
-        </div>
-      </div>
 
       {/* Success Criteria List */}
       <div className="glass-panel rounded-2xl p-6 border border-white/5">
